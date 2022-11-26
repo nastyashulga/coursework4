@@ -1,9 +1,9 @@
 from flask import request
-from flask_restx import Resource, Namespace
+from flask_restx import Resource, Namespace, abort
 
-from dao.model.movie import MovieSchema
+
 from implemented import movie_service
-from utils import auth_required, admin_required
+from utils import auth_required
 
 movie_ns = Namespace('movies')
 
@@ -12,42 +12,25 @@ movie_ns = Namespace('movies')
 class MoviesView(Resource):
     @auth_required
     def get(self):
-        director = request.args.get("director_id")
-        genre = request.args.get("genre_id")
-        year = request.args.get("year")
-        filters = {
-            "director_id": director,
-            "genre_id": genre,
-            "year": year,
+        data = {
+            'status' : request.args.get('satus'),
+            'page' : request.args.get('page')
         }
-        all_movies = movie_service.get_all(filters)
-        res = MovieSchema(many=True).dump(all_movies)
-        return res, 200
-
-    @admin_required
-    def post(self):
-        req_json = request.json
-        movie = movie_service.create(req_json)
-        return "", 201, {"location": f"/movies/{movie.id}"}
+        movies = movie_service.get_all_movies(data)
+        return movies, 200
 
 
 @movie_ns.route('/<int:bid>')
 class MovieView(Resource):
     @auth_required
-    def get(self, bid):
-        b = movie_service.get_one(bid)
-        sm_d = MovieSchema().dump(b)
-        return sm_d, 200
+    def get(self, mid):
+        movie = movie_service.get_item_by_id(mid)
 
-    @admin_required
-    def put(self, bid):
-        req_json = request.json
-        if "id" not in req_json:
-            req_json["id"] = bid
-        movie_service.update(req_json)
-        return "", 204
+        if not movie:
+            abort(404,message='Movie not found')
 
-    @admin_required
-    def delete(self, bid):
-        movie_service.delete(bid)
-        return "", 204
+        return movie, 200
+
+
+
+

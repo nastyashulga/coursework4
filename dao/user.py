@@ -32,3 +32,7 @@ class UserDAO:
 
         self.session.add(user)
         self.session.commit()
+
+    def get_user_by_email(self, email: str):
+        user = self.session.query(User).filter(User.email == email).one_or_none()
+        return user
