@@ -1,5 +1,5 @@
 
-from flask import Flask
+from flask import Flask, render_template
 
 from flask_restx import Api
 
@@ -12,9 +12,14 @@ from views.users import users_ns
 from views.auth import auth_ns
 
 
+
 def create_app(config_object):
     app = Flask(__name__)
     app.config.from_object(config_object)
+
+    @app.route('/')
+    def index():
+        return render_template('index.html')
     register_extensions(app)
     return app
 
@@ -38,4 +43,4 @@ app = create_app(Config())
 app.debug = True
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=10041, debug=True)
+    app.run(host="localhost", port=25000, debug=True)
