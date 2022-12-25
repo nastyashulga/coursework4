@@ -23,7 +23,7 @@ class AuthService():
             return None
 
         data = {
-            'email': user.name,
+            'email': user.email,
         }
 
         return self.get_access_token(data)
