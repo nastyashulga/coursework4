@@ -12,7 +12,7 @@ class AuthService():
         self.dao = dao
 
     def auth_user(self, email, password):
-        user = self.dao.get_by_username(email)
+        user = self.dao.get_user_by_email(email)
 
         if not user:
             return None
@@ -23,7 +23,7 @@ class AuthService():
             return None
 
         data = {
-            'email': user.username,
+            'email': user.name,
         }
 
         return self.get_access_token(data)

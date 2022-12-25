@@ -9,17 +9,19 @@ class UserDAO:
         return self.session.query(User).get(uid)
 
     def get_by_username(self, username):
-        user = self.session.query(User).filter(User.username == username)
+        user = self.session.query(User).filter(User.name == username)
         return user
 
     def get_all(self):
         return self.session.query(User).all()
 
-    def create(self, user_d):
-        ent = User(**user_d)
-        self.session.add(ent)
+    def create(self, user_data):
+        new_user = User(**user_data)
+
+        self.session.add(new_user)
         self.session.commit()
-        return ent
+
+        return new_user
 
     def delete(self, uid):
         user = self.get_one(uid)

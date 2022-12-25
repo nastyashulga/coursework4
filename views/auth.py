@@ -3,7 +3,7 @@ from flask_restx import Resource, Namespace, abort
 
 from constant import PWD_HASH_SALT, PWD_HASH_ITERATIONS
 from dao.model.user import UserSchema
-from implemented import user_service
+from implemented import user_service, auth_service
 
 auth_ns = Namespace('auth')
 
@@ -21,7 +21,7 @@ class AuthRegisterView(Resource):
         return "", 201
 
 @auth_ns.route('/login/')
-class AuthRegisterView(Resource):
+class LoginView(Resource):
     def post(self):
         req_json = request.json
 
@@ -31,7 +31,7 @@ class AuthRegisterView(Resource):
         if not email and password:
             abort(400)
 
-        token = user_service.auth_user(email, password)
+        token = auth_service.auth_user(email, password)
 
         if not token:
             return {"error": "Ошибка в логине или пароле"}, 401
@@ -45,7 +45,7 @@ class AuthRegisterView(Resource):
         if refresh_token is None:
             abort(400)
 
-        tokens = user_service.check_refresh_token(refresh_token)
+        tokens = auth_service.check_refresh_token(refresh_token)
 
         return tokens, 201
 
