@@ -29,12 +29,13 @@ class AuthService():
         return self.get_access_token(data)
 
     def get_hash(self, password: str):
-        return hashlib.pbkdf2_hmac(
+        hashed_password = hashlib.pbkdf2_hmac(
             'sha256',
             password.encode('utf-8'),
             PWD_HASH_SALT,
-            PWD_HASH_ITERATIONS
-        ).decode('utf-8', 'ignore')
+            PWD_HASH_ITERATIONS)
+
+        return base64.b64encode(hashed_password)
 
     def get_access_token(self, data: dict):
         min10 = datetime.utcnow() + timedelta(days=10)
